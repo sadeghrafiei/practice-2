@@ -1,45 +1,57 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+} from 'react-native';
 import images from '../../../../../assets/images/images';
+import StoryItem from './StoryItem';
 
+const data = [
+  {
+    id: 1,
+    image: images.logos.almas,
+    title: 'Start here',
+  },
+  {
+    id: 2,
+    image: images.logos.fly,
+    title: 'IG Stories',
+  },
+  {
+    id: 3,
+    image:images.logos.kingStorie,
+    title: 'linkin.bio',
+  },
+  {
+    id: 4,
+    image:images.logos.tea,
+    title: 'latest',
+  },
+  {
+    id: 5,
+    image:images.logos.light,
+    title: 'Start here',
+  },
+  {
+    id: 6,
+    image:images.logos.fly,
+    title: 'IG Stories',
+  },
+];
 const SubBio = () => {
   return (
     <>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.text}>Following</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.text}>Message</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.text}>Email</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonIcon}>
-          <Image style={styles.downIcon} source={images.logos.down} />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.itemImgWrapper}>
-        <View>
-          <Image style={styles.storeis} source={images.logos.almas} />
-          <Text style={styles.subText}>Start here🗽</Text>
-        </View>
-        <View>
-          <Image style={styles.storeis} source={images.logos.fly} />
-          <Text style={styles.subText}>IG Storeis🌟</Text>
-        </View>
-        <View>
-          <Image style={styles.storeis} source={images.logos.tea} />
-          <Text style={styles.subText}>Linkin.bio🔗</Text>
-        </View>
-        <View>
-          <Image style={styles.storeis} source={images.logos.kingStorie} />
-          <Text style={styles.subText}>UGC👑</Text>
-        </View>
-        <View>
-          <Image style={styles.storeis} source={images.logos.light} />
-          <Text style={styles.subText}>Latest🌩️</Text>
-        </View>
+      <View style={styles.sectionFlatList}>
+        <FlatList
+          data={data}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({item}) => (
+            <StoryItem image={item.image} title={item.title} />
+          )}
+        />
       </View>
     </>
   );
@@ -48,58 +60,7 @@ const SubBio = () => {
 export default SubBio;
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-  },
-  button: {
-    padding: 5,
-    top: 10,
-    width: 120,
-    height: 10,
-  },
-  text: {
-    borderWidth: 1,
-    padding: 7,
-    borderColor: 'gray',
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    textAlign: 'center',
-  },
-  downIcon: {
-    height: 20,
-    width: 20,
-    top: 8,
-    borderWidth: 1,
-    borderColor: 'gray',
-    backgroundColor: '#fff',
-    borderRadius: 5,
-  },
-  buttonIcon: {
-    padding: 5,
-    top: 10,
-  },
-  storeis: {
-    width: 50,
-    height: 50,
-    borderRadius: 32.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 5,
-    borderColor: '#707070',
-    borderWidth: 2,
-  },
-  itemImgWrapper: {
-    top: 22,
-    flexDirection: 'row',
-    right: 8,
-    justifyContent: 'center'
-  },
-  subText: {
-    padding: 8,
-    margin: 4,
-    color: 'gray',
-    fontSize: 12,
-    bottom: 12,
-    right: 5
+  sectionFlatList: {
+    height: 170,
   },
 });

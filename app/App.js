@@ -1,12 +1,12 @@
 import React from 'react';
 
 import {Provider as PaperProvider} from 'react-native-paper';
-import Profile from './view/pages/Profile';
+import Navigation from './view/pages/login';
 
 const App = () => {
   return (
     <PaperProvider>
-      <Profile />
+      <Navigation />
     </PaperProvider>
   );
 };

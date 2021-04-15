@@ -4,11 +4,13 @@ import * as Yup from 'yup';
 import {Formik} from 'formik';
 import ModalNumber from './Modal';
 
+const PhoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+
 const validationSchema = Yup.object().shape({
   phoneNumber: Yup.string()
     .typeError('you should type number!!!!!')
-    .min(10, 'Too Short!')
-    .max(14, 'Too Long!')
+    .matches(PhoneRegex , 'Wrong number, Please write correct number!!!')
+    .min(11, 'Too Short!')
     .required('Required!!'),
   password: Yup.string()
     .min(8, 'you should type more 8 ')
@@ -114,12 +116,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   input: {
-    borderWidth: 0.5,
+    borderWidth: 0.9,
     borderRadius: 8,
     padding: 12,
   },
   inputPassword: {
-    borderWidth: 0.5,
+    borderWidth: 0.9,
     borderRadius: 8,
     width: 265,
     right: 50

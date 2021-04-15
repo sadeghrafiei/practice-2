@@ -32,7 +32,7 @@ const EmailPage = () => {
             <View style={styles.phoneNumber}>
               <TextInput
                 style={styles.input}
-                placeholder="email"
+                placeholder="Email"
                 onChangeText={handleChange('email')}
                 value={values.phoneNumber}
                 onBlur={handleBlur('email')}
@@ -41,7 +41,7 @@ const EmailPage = () => {
                 <Text style={styles.errorText}>{errors.email}</Text>
               )}
             </View>
-            <Button title={'Next'} disabled={!isValid} onPress={handleSubmit} />
+            <Button title={'Next'} disabled={!isValid || values.email === ''} onPress={handleSubmit} />
           </View>
         );
       }}

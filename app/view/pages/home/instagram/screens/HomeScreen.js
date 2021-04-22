@@ -10,7 +10,6 @@ const Home = () => {
     <View style={styles.container}>
       <HomeTopNav />
       <ContentContainer />
-      <TabNavigation />
     </View>
   );
 };

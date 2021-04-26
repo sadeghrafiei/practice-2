@@ -22,12 +22,25 @@ const auth = {
   signUpConfirmation: (data) => api.post('sign-up-confirmation', data),
 };
 
+const Register = (data) => {
+  return api.post('/auth/register', data);
+};
+
+const verifyCode = (data) => {
+  return api.post('/auth/verify' ,data);
+};
+
+const Login = (data) => {
+  return api.post('/auth/login',data);
+}
 export default {
   getRepositories: (query) =>
     api.get(`/search/repositories?q=${query}&sort=stars`, {}),
   // any: someId => api.get(`/any/${someId}`),
   // any: data => api.post('/any', data),
-
+  Register,
+  verifyCode,
+  Login,
   ...methods,
   ...auth,
 };

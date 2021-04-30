@@ -22,7 +22,7 @@ const auth = {
   signUpConfirmation: (data) => api.post('sign-up-confirmation', data),
 };
 
-const Register = (data) => {
+const register = (data) => {
   return api.post('/auth/register', data);
 };
 
@@ -33,14 +33,19 @@ const verifyCode = (data) => {
 const Login = (data) => {
   return api.post('/auth/login',data);
 }
+
+const getPosts = (page,limit) => {
+  return api.get(`ig/posts?page=${page}&limit${limit}`);
+}
 export default {
   getRepositories: (query) =>
     api.get(`/search/repositories?q=${query}&sort=stars`, {}),
   // any: someId => api.get(`/any/${someId}`),
   // any: data => api.post('/any', data),
-  Register,
+  register,
   verifyCode,
   Login,
+  getPosts,
   ...methods,
   ...auth,
 };

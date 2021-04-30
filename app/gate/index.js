@@ -30,7 +30,7 @@ const verifyCode = (data) => {
   return api.post('/auth/verify' ,data);
 };
 
-const Login = (data) => {
+const login = (data) => {
   return api.post('/auth/login',data);
 }
 

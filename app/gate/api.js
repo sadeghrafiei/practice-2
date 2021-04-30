@@ -3,16 +3,27 @@ import isEmpty from 'lodash/isEmpty';
 
 import tokenHelper from 'helpers/token';
 import {API_URL} from 'helpers/constants';
-import Register from './index';
+import gate from './index';
 
 const client = axios.create({baseURL: API_URL, json: true});
 
 const call = async (method, url, data = {}) => {
   const token = await tokenHelper.get();
-
+  const headers = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
   client.interceptors.request.use(
-    function (config) {
-    console.log({request})
+    async (config) => {
+      try {
+        const token = await tokenHelper.get();
+        config.headers.Authorization = token ? `Bearer ${token}`: '';
+      
+       // console.log('config*',config)        
+      } catch (error) {
+        console.log(error)
+      }
+
       // Do something before request is sent
       return config;
     },
@@ -25,13 +36,14 @@ const call = async (method, url, data = {}) => {
   // Add a response interceptor
   client.interceptors.response.use(
     function (response) {
+      //console.log(response);
       if (response.data.status == 'FAIL') {
-        alert('Invalid!!!');
-      }else if (response.data.status == 'SUCCESS') {
-        alert('SUCCESS')
+        //alert(response?.data?.message?.[0]);
+      } else if (response.data.status == 'SUCCESS') {
+        //alert(response?.data?.message?.[0]);
+        response.config.data = gate.getPosts(data)
       }
-      
-      console.log(response.data);
+     
       // Any status code that lie within the range of 2xx cause this function to trigger
       // Do something with response data
       return response;
@@ -42,10 +54,6 @@ const call = async (method, url, data = {}) => {
       return Promise.reject(error);
     },
   );
-  const headers = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  };
 
   if (token !== '') {
     headers.Authorization = `Bearer ${token}`;

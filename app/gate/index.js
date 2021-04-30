@@ -44,7 +44,7 @@ export default {
   // any: data => api.post('/any', data),
   register,
   verifyCode,
-  Login,
+  login,
   getPosts,
   ...methods,
   ...auth,

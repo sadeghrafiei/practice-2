@@ -1,137 +1,42 @@
 import React from 'react';
 import {StyleSheet, Text, View, TextInput} from 'react-native';
 
-export const InputPhoneNumber = ({
-  errors,
+export const GlobalTextInput = ({
+  style,
+  error,
   touched,
-  handleBlur,
-  handleChange,
-  values,
+  ...otherProps
 }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.phoneTextInputContainer}>
+      <View style={styles.InputContainer}>
         <TextInput
-          style={styles.inputPassword}
-          placeholder="Phone Number"
-          placeholderTextColor="#686868"
-          onChangeText={handleChange('phoneNumber')}
-          value={values.phoneNumber}
-          onBlur={handleBlur('phoneNumber')}
-          keyboardType="number-pad"
+        {...otherProps}
+          style={style}
+          placeholderTextColor="#a6a6a6"
         />
       </View>
-      {errors.phoneNumber && touched.phoneNumber && (
-        <Text style={styles.errorTextPhoneNumber}>{errors.phoneNumber}</Text>
-      )}
-    </View>
-  );
-};
-export const InputPassword = ({
-  errors,
-  touched,
-  handleBlur,
-  handleChange,
-  values,
-}) => {
-  return (
-    <View style={styles.container}>
-      <View>
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#686868"
-          onChangeText={handleChange('password')}
-          value={values.password}
-          onBlur={handleBlur('password')}
-          keyboardType="number-pad"
-          
-        />
+      <View style={styles.error}>
+        {error && touched && <Text style={styles.errorText}>{error}</Text>}
       </View>
-      {errors.password && touched.password && (
-        <Text style={styles.errorTextPassword}>{errors.password}</Text>
-      )}
-    </View>
-  );
-};
-
-export const InputVerify = ({
-  handleChange,
-  values,
-  handleBlur,
-  touched,
-  errors,
-}) => {
-  return (
-    <View style={[styles.password]}>
-      <TextInput
-        style={[
-          styles.inputVerify,
-          errors.verifyCode && touched.verifyCode
-            ? {borderColor: 'red'}
-            : {borderColor: '#ccc'},
-        ]}
-        placeholder="Verify Code..."
-        onChangeText={handleChange('verifyCode')}
-        value={values.password}
-        onBlur={handleBlur('verifyCode')}
-        keyboardType="number-pad"
-      />
-      {errors.verifyCode && touched.verifyCode && (
-        <Text style={styles.errorTextVerify}>{errors.verifyCode}</Text>
-      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    flex: 1,
   },
-  phoneTextInputContainer: {
+  InputContainer: {
     padding: 5,
   },
-  inputPassword: {
-    borderRadius: 8,
-    color: 'black',
-    borderBottomColor: 'transparent',
-    left: 40,
-  },
-  errorTextPassword: {
-    marginHorizontal: '1%',
+  errorText: {
+    marginVertical: '1%',
     marginBottom: 5,
     color: '#EF4444',
     fontSize: 13,
+  },
+  error: {
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 5,
-  },
-  errorTextPhoneNumber: {
-    marginHorizontal: '1%',
-    marginBottom: 5,
-    color: '#EF4444',
-    fontSize: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  input: {
-    borderRadius: 8,
-    color: 'black',
-    padding: 10,
-    borderBottomColor: 'transparent',
-  },
-  password: {
-    paddingBottom: 39,
-  },
-  inputVerify: {
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    borderColor: '#ccc',
-  },
-  errorTextVerify: {
-    color: 'red',
-    fontWeight: 'bold',
-    fontSize: 12,
   },
 });

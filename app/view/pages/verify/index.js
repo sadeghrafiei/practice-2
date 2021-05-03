@@ -7,8 +7,8 @@ import gate from 'gate';
 import {logos} from 'assets/images/images';
 import {GlobalTextInput, InputVerify} from '../../components/Input';
 import Button from '../../components/Button';
-import useApi from 'helpers/useApi';
 import tokenHelper from 'helpers/token';
+import {useMutation} from 'react-query';
 
 const validationSchema = Yup.object().shape({
   verifyCode: Yup.string()
@@ -19,22 +19,47 @@ const validationSchema = Yup.object().shape({
 const VerifyCode = ({route}) => {
   const phone = route.params.phone;
 
-  const [data, isLoading, error, mutate] = useApi(gate.verifyCode);
+  const {isLoading, mutate} = useMutation(gate.verifyCode, {
+    onSuccess: (data) => {
+      console.log('data =>>', data);
+      if (data?.status === 'SUCCESS') {
+        alert(data?.message?.[0]);
+        setToken(data?.data?.token);
+      }
+    },
+    onError: (e) => {
+      console.log('error =>', e);
+    },
+  });
 
-  const setToken = async (token) => {
+  const setToken = (token) => {
     try {
-      await tokenHelper.set(token);
+      const res = tokenHelper.set(token);
+      console.log(res);
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    if (data.status == 'SUCCESS') {
-      alert(data?.message?.[0]);
-      setToken(data?.data?.token);
+  
+  /*
+  const mutate = async (values) => {
+    mutation.isLoading(true);
+    try {
+      const res = await gate.verifyCode(values);
+      mutation.data(res);
+    } catch (e) {
+      mutation.isError(e);
+    } finally {
+      mutation.isLoading(false);
     }
-  }, [data]);
+  };
+  const token = setToken(gate.verifyCode?.data?.token);
+  
+    if (mutation.isSuccess) {
+      mutate(token)
+      console.log('isSuccess')
+    } */
 
   return (
     <Formik
@@ -113,7 +138,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     borderColor: '#ccc',
-    height: 55
+    height: 55,
   },
   Image: {
     height: 70,
@@ -127,7 +152,7 @@ const styles = StyleSheet.create({
   },
   Button: {
     paddingLeft: 21,
-    marginTop: 18
+    marginTop: 18,
   },
   InputStyle: {
     borderRadius: 8,

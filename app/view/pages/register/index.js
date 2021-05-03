@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet, Text, Image} from 'react-native';
 import * as Yup from 'yup';
 import {Formik} from 'formik';
 import {useNavigation} from '@react-navigation/native';
+import {useMutation} from 'react-query';
 
 import gate from 'gate';
 import Button from '../../components/Button';
-import {GlobalTextInput, InputPassword} from '../../components/Input';
+import {GlobalTextInput} from '../../components/Input';
 
 import ModalNumber from './modal/index';
 import {logos} from 'assets/images/images';
-import useApi from 'helpers/useApi';
 
 const PhoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 
@@ -26,21 +26,21 @@ const validationSchema = Yup.object().shape({
 });
 
 const Register = () => {
-  const [data, isLoading, error, mutate] = useApi(gate.register);
+  const navigation = useNavigation();
   const [phone, setPhone] = useState('');
 
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    if (data.status == 'SUCCESS') {
-      alert(data.message[0]);
-      navigation.navigate('Verify', {phone});
-    }
-  }, [data]);
-
-  useEffect(() => {
-    console.log(error);
-  }, [error]);
+  const {mutate, isLoading} = useMutation(gate.register, {
+    onSuccess: (data) => {
+      console.log('data =>>', data);
+      if (data?.status === 'SUCCESS') {
+        alert(data?.message?.[0]);
+        navigation.navigate('Verify', {phone});
+      }
+    },
+    onError: (e) => {
+      console.log('error =>', e);
+    },
+  });
 
   return (
     <Formik
@@ -120,6 +120,7 @@ const Register = () => {
                 keyboardType="number-pad"
                 style={styles.InputStyle}
                 placeholder={'Password'}
+                secureTextEntry
               />
             </View>
 
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     color: 'black',
     borderBottomColor: 'transparent',
-    top: 20
+    top: 20,
   },
   headerTextLogin: {
     padding: 20,
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomColor: 'transparent',
   },
-  
+
   inputPassword: {
     borderRadius: 8,
     color: 'black',
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
     marginHorizontal: '15%',
     height: 51,
     justifyContent: 'center',
-    top: 12
+    top: 12,
   },
 
   number: {
@@ -268,7 +269,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4287f5',
     left: 19,
   },
-  error: {justifyContent:'center',alignItems:'center'},
+  error: {justifyContent: 'center', alignItems: 'center'},
 
   phoneInputContainer: {
     flexDirection: 'row',

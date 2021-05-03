@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {StyleSheet, View, ActivityIndicator} from 'react-native';
+
 import {AuthStack} from './auth';
 import {MainStack} from './main';
-
 import Token from '../helpers/token';
-import SplashScreen from '../view/pages/login/FormValid/auth/splash';
+import SplashScreen from '../view/pages/splash';
 
 const Stack = createStackNavigator();
 
@@ -34,7 +33,7 @@ export const Router = () => {
       <Stack.Navigator headerMode={'none'}>
         {isLoading ? (
           <Stack.Screen name="SplashScreen" component={SplashScreen} />
-        ) : userToken == '' || userToken == null ? (
+        ) : !userToken ? (
           <Stack.Screen name="AuthStack" component={AuthStack} />
         ) : (
           <Stack.Screen name="MainStack" component={MainStack} />
@@ -44,10 +43,3 @@ export const Router = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  ActivityIndicator: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

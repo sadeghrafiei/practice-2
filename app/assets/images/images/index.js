@@ -21,22 +21,34 @@ const fly = require('./fly.png');
 const kingStorie = require('./kingStorie.jpg');
 const almas = require('./almas.png');
 const tea = require('./tea.jpg');
+const search = require('./search.jpg');
+const Home = require('./Home.png');
+const like = require('./like.png');
+const plus = require('./plus.png');
+const user = require('./user.png');
+const splash = require('./splash.jpg')
 
+const logos =   {
+  instagramLogo,
+  back,
+  more,
+  down,
+  igtv,
+  tag,
+  viewList,
+  fly,
+  almas,
+  light,
+  kingStorie,
+  tea,
+  search,
+  like,
+  plus,
+  Home,
+  user,
+}
+export  {logos}
 export default {
-  logos: {
-    instagramLogo,
-    back,
-    more,
-    down,
-    igtv,
-    tag,
-    viewList,
-    fly,
-    almas,
-    light,
-    kingStorie,
-    tea
-  },
   profile: {
     profileSadegh,
     profileMark,
@@ -51,5 +63,6 @@ export default {
     pic4,
     pic5,
     pic6,
+    splash
   },
 };

@@ -7,9 +7,9 @@ import {useNavigation} from '@react-navigation/native';
 import {logos} from 'assets/images/images';
 import tokenHelper from 'helpers/token';
 import gate from 'gate';
-import useApi from 'helpers/useApi';
 import Button from '../../components/Button';
-import {InputPassword, GlobalTextInput} from '../../components/Input';
+import {GlobalTextInput} from '../../components/Input';
+import {useMutation} from 'react-query';
 
 const PhoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 
@@ -26,8 +26,20 @@ const validationSchema = Yup.object().shape({
 
 const Login = () => {
   const navigation = useNavigation();
-  const [data, isLoading, error, mutate] = useApi(gate.login);
-  const [phone, setPhone] = useState('');
+  const {isLoading, mutate } = useMutation(gate.login, {
+    onSuccess: (data) => {
+      if (data?.status === 'SUCCESS') {
+        alert(data?.message?.[0]);
+        setToken(data?.data?.token);
+      }
+    },
+    onError: (data) => {
+      if (data?.status === 'FAIL') {
+        alert(data?.message?.[0]);
+      }
+    },
+  });
+
   const setToken = async (token) => {
     try {
       await tokenHelper.set(token);
@@ -35,18 +47,6 @@ const Login = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (data.status == 'SUCCESS') {
-      alert(data?.message?.[0]);
-      setToken(data?.data?.token);
-    } else if (data.status == 'FAIL') {
-      alert(data.message[0]);
-    }
-  }, [data]);
-  useEffect(() => {
-    console.log(error);
-  }, [error]);
 
   return (
     <Formik
@@ -57,7 +57,6 @@ const Login = () => {
       onSubmit={(values) => {
         let password = values.password;
         let phone = values.phoneNumber;
-        setPhone(values.phoneNumber);
         mutate({password, phone});
       }}
       validationSchema={validationSchema}>
@@ -128,6 +127,7 @@ const Login = () => {
                   keyboardType="number-pad"
                   style={styles.InputStyle}
                   placeholder={'Password'}
+                  secureTextEntry
                 />
               </View>
             </View>
@@ -249,29 +249,13 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingTop: 25,
-    paddingRight: 20,
   },
   text: {
     textAlign: 'center',
     fontSize: 16,
     color: 'white',
   },
-  disabledButton: {
-    opacity: 0.7,
-    backgroundColor: '#93C5FD',
-    borderRadius: 5,
-    marginHorizontal: '10%',
-    height: 45,
-    justifyContent: 'center',
-  },
-  enabledButton: {
-    opacity: 1,
-    backgroundColor: '#3B82F6',
-    borderRadius: 5,
-    marginHorizontal: '10%',
-    height: 45,
-    justifyContent: 'center',
-  },
+
   ActivityIndicator: {
     top: 40,
   },

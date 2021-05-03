@@ -9,15 +9,14 @@ import {store, persistor} from 'store/index';
 import {Router} from './app/routes/index'
 
 import Loading from 'view/components/Loading';
-import {App, TabBar , BottomTab} from './app/App';
 
 import {name as appName} from './app.json';
-
+import {App} from './app/helpers/useApi'
 
 const Elegant = () => (
   <Provider store={store}>
     <PersistGate loading={<Loading />} persistor={persistor}>
-      <Router />
+      <App />
     </PersistGate>
   </Provider>
 );

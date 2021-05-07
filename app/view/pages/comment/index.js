@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,11 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from 'react-query';
 import Moment from 'moment';
 
 import gate from 'gate';
@@ -16,65 +21,61 @@ import images from 'assets/images/images';
 
 import Comment from './Comment';
 
+
+ let LIMIT = 20
 const CommentsScreen = ({route}) => {
   const [comments, setComments] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [addComment, setAddComment] = useState('');
-  const [page, setPage] = useState(1);
 
   const {postComment} = route.params;
+  
+  const queryClient = useQueryClient();
 
   const refresh = () => {
-    setComments([]);
-    setPage(1);
+    queryClient.invalidateQueries(['comments', postComment.id]);
+    isRefreshing && setIsRefreshing(false);
   };
 
-  const fetcher = async () => {
-    setIsLoading(true);
-    try {
+  const {
+    data,
+    fetchNextPage,
+    isFetchingNextPage,
+    isFetching,
+  } = useInfiniteQuery(
+    ['comments',postComment.id],
+    async ({pageParam = 1}) => {
       const res = await gate.getComment({
         post_id: postComment.id,
-        page: page,
-        limit: 10,
+        page: pageParam,
+        limit: LIMIT,
       });
-      if (res.status == 'SUCCESS') {
-        setComments([...comments, ...res?.data]);
-      }
-    } catch (e) {
-      alert(e.error);
-    } finally {
-      setIsLoading(false);
-      isRefreshing && setIsRefreshing(false);
-    }
-  };
+      return res.data;
+    },
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return lastPage?.length === LIMIT ? allPages.length + 1 : false;
+      },
+    },
+  );
 
-  useEffect(() => {
-    fetcher();
-  }, [page]);
 
-  const addNewComments = async () => {
-    console.log('clicked');
-    try {
-      const res = await gate.postComment({
-        post_id: postComment.id,
-        content: addComment,
-      });
-      console.log(res);
-      if (res.status == 'SUCCESS') {
-        setComments([res?.data, ...comments]);
-        setAddComment('');
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const {mutate} = useMutation(gate.postComment, {
+    onSuccess: (data) => {
+      setComments([data?.data]);
+    },
+  });
+    let flatlistData = [];
+    comments
+      ? (flatlistData = data?.pages?.flat())
+      : [...comments, ...data?.pages?.flat()];
+   
 
   const renderItem = ({item}) => <Comment item={item} />;
   return (
     <View style={styles.container}>
       <FlatList
-        data={comments}
+        data={flatlistData}
         renderItem={renderItem}
         keyExtractor={(item) => item._id.toString()}
         ListHeaderComponent={
@@ -95,7 +96,7 @@ const CommentsScreen = ({route}) => {
           </View>
         }
         ListFooterComponent={
-          isLoading && (
+          isFetching && (
             <ActivityIndicator
               color="black"
               style={styles.footerFlatList}
@@ -104,11 +105,14 @@ const CommentsScreen = ({route}) => {
           )
         }
         onEndReached={() => {
-          setPage(page + 1);
+          if (!isFetchingNextPage) {
+            fetchNextPage();
+          }
         }}
         refreshing={isRefreshing}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={1}
         onRefresh={() => refresh()}
+        initialNumToRender={5}
       />
       <View style={styles.newCommentContainer}>
         <Image
@@ -126,7 +130,8 @@ const CommentsScreen = ({route}) => {
           style={styles.addCommentContainerButton}
           disabled={!addComment}
           onPress={() => {
-            addNewComments();
+            mutate({post_id: postComment.id, content: addComment}),
+              setAddComment('');
           }}>
           <Text
             style={[

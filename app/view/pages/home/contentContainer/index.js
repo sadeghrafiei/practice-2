@@ -1,39 +1,35 @@
-import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  FlatList,
-  View,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, FlatList, View, ActivityIndicator} from 'react-native';
+import {useInfiniteQuery, useQueryClient} from 'react-query';
 
 import gate from 'gate';
 
-import PostContainer from './Post/index';
-
-const {width} = Dimensions.get('window');
+import PostContainer from './Post';
 
 const ContentContainer = () => {
-  const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const {data, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
+    'posts',
+    async ({pageParam = 1}) => {
+      const res = await gate.getPosts(pageParam, 5);
+      return res.data;
+    },
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return lastPage?.length === 5 ? allPages?.length + 1 : false;
+      },
+    },
+  );
+  console.log(data);
 
-  const fetcher = async () => {
-    setIsLoading(true);
-    try {
-      const res = await gate.getPosts(page, 1);
-      //console.log(res);
-      setPosts([...posts, ...res.data]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-      setPage(page+1)
-    }
+  const queryClient = useQueryClient();
+  
+  const refresh = () => {
+    queryClient.invalidateQueries(['posts']);
+    isRefreshing && setIsRefreshing(false);
   };
-  useEffect(() => {
-    fetcher();
-  }, [page]);
+
+  const flatListData = data?.pages?.flat();
 
   const renderItem = ({item}) => (
     <View style={styles.postContainer}>
@@ -42,17 +38,23 @@ const ContentContainer = () => {
   );
   return (
     <FlatList
-      data={posts}
-      onEndReached={() => setPage(page + 1)}
+      data={flatListData}
+      onEndReached={() => {
+        if (!isFetchingNextPage) {
+          fetchNextPage();
+        }
+      }}
       ListFooterComponent={
-        isLoading ? <ActivityIndicator size="large" color="black" /> : null
+        isFetchingNextPage && <ActivityIndicator size="large" color="black" />
       }
       onEndReachedThreshold={0.9}
       initialNumToRender={5}
       renderItem={renderItem}
       style={styles.container}
       showsVerticalScrollIndicator={false}
-      keyExtractor = { (item, index) => index.toString() }
+      keyExtractor={(item) => item?.id.toString()}
+      refreshing={isRefreshing}
+      onRefresh={() => refresh()}
     />
   );
 };
@@ -64,7 +66,6 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     backgroundColor: 'white',
-    width: width - 16,
     height: 540,
     marginVertical: 8,
     borderRadius: 18,

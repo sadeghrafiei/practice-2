@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import images from 'assets/images/images';
@@ -80,9 +80,10 @@ const PostContainer = ({item}) => {
             size={20}
             color="#7d7d7d"
           />
-          <MaterialCommunityIcons
+          <Ionicons
             style={styles.bookMark}
-            name="mdiBookmarkOutline "
+            name="bookmark-outline"
+            color="#7d7d7d"
             size={24}
           />
         </View>

@@ -35,7 +35,7 @@ const login = (data) => {
 }
 
 const getPosts = (page,limit) => {
-  return api.get(`ig/posts?page=${page}&limit${limit}`);
+  return api.get(`ig/posts?page=${page}&limit=${limit}`);
 }
 export default {
   getRepositories: (query) =>

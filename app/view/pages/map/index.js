@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useMemo} from 'react';
-import {StyleSheet, View, TextInput, Image} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View, TextInput, Image, Platform, Text} from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 //import { PermissionsAndroid } from 'react-native';
 import LocationEnabler from 'react-native-location-enabler';
@@ -58,8 +58,6 @@ let data = {
   ],
 };
 
-
-
 const {
   PRIORITIES: {HIGH_ACCURACY},
   useLocationSettings,
@@ -75,6 +73,12 @@ const MapScreen = () => {
     isGranted: false,
     coordinates: [51.189988, 32.260997],
   });
+
+  const HackMarker = ({children}) =>
+    Platform.select({
+      ios: children,
+      android: <Text>{children}</Text>,
+    });
 
   return (
     <View style={styles.page}>
@@ -113,18 +117,18 @@ const MapScreen = () => {
             zoomLevel={3.2}
             followUserLocation={mapState.isGranted}
           />
+          {/* <MapboxGL.UserLocation /> */}
           {data.features.map((user) => (
             <MapboxGL.PointAnnotation
               key={user.id}
               id={String(user.id)}
               coordinate={user.geometry.coordinates}>
-              
+              <HackMarker>
                 <Image
-                  style={{width: 40, height: 40}}
+                  style={{height: 30, width: 30}}
                   source={require('./marker.png')}
                 />
-              
-
+              </HackMarker>
               <MapboxGL.Callout
                 title={`Place: ${user.title}\nBio: ${user.description}`}
                 containerStyle={{
@@ -163,15 +167,6 @@ const styles = StyleSheet.create({
     elevation: 6,
     fontSize: 19,
   },
-  annotationContainer: {
-    width: 20,
-    height: 20,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'gray',
-  },
 });
 
 export default MapScreen;
-

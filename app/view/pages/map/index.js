@@ -58,24 +58,7 @@ let data = {
   ],
 };
 
-let icon = {
-  iconImage: require('./marker.png'),
-  iconAllowOverlap: true,
-  iconSize: 0.1,
-};
-let viewItem = (
-  <MapboxGL.ShapeSource
-    id={'exampleShapSource'}
-    hitbox={{width: 20, height: 20}}
-    onPress={(e) => {
-      console.log(e);
-    }}
-    shape={data}>
-    <MapboxGL.SymbolLayer
-      id={'exampleIconName'}
-      style={icon}></MapboxGL.SymbolLayer>
-  </MapboxGL.ShapeSource>
-);
+
 
 const {
   PRIORITIES: {HIGH_ACCURACY},
@@ -83,36 +66,6 @@ const {
 } = LocationEnabler;
 
 const MapScreen = () => {
-  const [viewport, setViewport] = useState({
-    markers: [
-      {
-        coordinate: [32.644073, 51.667545],
-        title: 'Si-O-Se-pol',
-        description: 'This is the best place in isfahan',
-      },
-      {
-        coordinate: [32.636827, 51.683288],
-        title: 'Pol-Khajoo',
-        description: 'This is the second best place in isfahan',
-      },
-      {
-        coordinate: [32.639176, 51.69432],
-        title: 'Pol-Bozorgmehr',
-        description: 'This is the third best place in isfahan',
-      },
-      {
-        coordinate: [32.63399, 51.704575],
-        title: 'Pol-Ghadir',
-        description: 'This is the fourth best place in isfahan',
-      },
-    ],
-    region: {
-      latitude: 45.52220671242907,
-      longitude: -122.6653281029795,
-      latitudeDelta: 0.04864195044303443,
-      longitudeDelta: 0.040142817690068,
-    },
-  });
   const [searchText, setSearchText] = useState('');
   const [enabled, requestResolution] = useLocationSettings({
     priority: HIGH_ACCURACY,
@@ -160,18 +113,6 @@ const MapScreen = () => {
             zoomLevel={3.2}
             followUserLocation={mapState.isGranted}
           />
-          {/* <MapboxGL.ShapeSource
-            id={'exampleShapSource'}
-            hitbox={{width: 20, height: 20}}
-            onPress={(e) => {
-              console.log(e);
-            }}
-            shape={data}>
-            <MapboxGL.SymbolLayer
-              id={'exampleIconName'}
-              style={icon}></MapboxGL.SymbolLayer>
-          </MapboxGL.ShapeSource>
-          ; */}
           {data.features.map((user) => (
             <MapboxGL.PointAnnotation
               key={user.id}
